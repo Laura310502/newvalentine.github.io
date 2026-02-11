@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuoi essere il mio Valentino?</title>
+    <style>
+        /* RESET E STILE BASE */
+        body {
+            background-color: #ffeef2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Evita lo scroll fastidioso */
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 85%;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 { 
+            color: #ff4d6d; 
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        img {
+            border-radius: 15px;
+            margin-bottom: 20px;
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        /* BOTTONI */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            min-height: 100px; /* Spazio per la crescita del tasto Sì */
+        }
+
+        button {
+            padding: 15px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        #yesBtn { 
+            background-color: #ff4d6d; 
+            color: white; 
+            z-index: 11;
+        }
+
+        #noBtn { 
+            background-color: #f0f0f0; 
+            color: #666; 
+            position: fixed; /* Si muove rispetto alla finestra intera */
+            transition: 0.15s ease;
+            z-index: 12;
+        }
+
+        .wa-btn {
+            background-color: #25D366;
+            color: white;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* ANIMAZIONE CUORI */
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        .heart {
+            position: fixed;
+            top: -10vh;
+            user-select: none;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainContainer">
+    <img src="https://i.pinimg.com/736x/0f/a9/a7/0fa9a7e8d9f74c6e99289fa36a9ea441.jpg" id="mainImage" width="200" alt="Valentino?">
+    
+    <h1 id="mainTitle">Vuoi essere il mio Valentino?</h1>
+    
+    <div class="buttons">
+        <button id="yesBtn" onclick="celebrate()">SÌ!</button>
+        <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+    </div>
+</div>
+
+<script>
+    let noCount = 0;
+
+    function moveButton() {
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        
+        // 1. Calcolo posizione sicura per il No
+        const padding = 50;
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        
+        const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+        const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+        
+        noBtn.style.left = randomX + 'px';
+        noBtn.style.top = randomY + 'px';
+        
+        // 2. Il tasto SÌ cresce ogni volta che lui prova a premere No
+        noCount++;
+        const newScale = 1 + (noCount * 0.15); // Cresce del 15% ogni tentativo
+        yesBtn.style.transform = `scale(${newScale})`;
+        
+        // 3. Testo del tasto No che cambia
+        const frasi = ["Sicuro?", "Ops!", "Riprova", "Daiii", "Eh no!", "Non credo proprio", "Ma come?"];
+        noBtn.innerText = frasi[Math.floor(Math.random() * frasi.length)];
+    }
+
+    function celebrate() {
+        // Nascondi il tasto No
+        document.getElementById('noBtn').style.display = 'none';
+        
+        // Parte la pioggia di cuori
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createHeart, i * 50);
+        }
+
+        // Cambia il contenuto della pagina
+        document.getElementById('mainContainer').innerHTML = `
+            <h1 style="color: #ff4d6d;">Lo sapevo! ❤️</h1>
+            <img src="https://media.tenor.com/deLlWpp34aIAAAAC/cat-love.gif" width="250" alt="Happy Cat">
+            <p style="font-size: 1.2em;">Hai fatto la scelta giusta (non che ne avessi altre!).</p>
+            <a href="https://wa.me/?text=Ho%20accettato!%20Sarò%20il%20tuo%20Valentino%20❤️" 
+               target="_blank" 
+               class="wa-btn">
+               Conferma su WhatsApp 📱
+            </a>
+        `;
+    }
+
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        heart.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+        
+        document.body.appendChild(heart);
+        
+        // Rimuove il cuore dopo l'animazione per non appesantire il sito
+        setTimeout(() => {
+            heart.remove();
+        }, 5000);
+    }
+</script>
+
+</body>
+</html>
